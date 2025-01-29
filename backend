@@ -1,0 +1,30 @@
+from flask import Flask, jsonify, request
+import requests
+
+app = Flask(__name__)
+
+API_KEY = "AIzaSyC0Iv6OVU9F0FMBtUkE-hrg1ouCvOvCgnQ"  # Your API key
+
+@app.route('/')
+def home():
+    return 'Welcome to the Supermarket Price Checker API!'
+
+@app.route('/prices', methods=['GET'])
+def get_prices():
+    supermarket = request.args.get('supermarket')
+    city = request.args.get('city')
+
+    # Here we use the API to fetch prices from the selected supermarket and city
+    url = f"https://api.example.com/prices?supermarket={supermarket}&city={city}&apiKey={API_KEY}"
+    
+    # Make the request to the external API
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json()
+        return jsonify(data)
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": str(e)}), 400
+
+if __name__ == '__main__':
+    app.run(debug=True)
